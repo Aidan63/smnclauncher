@@ -1,0 +1,34 @@
+<Window
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:smnclauncher.ViewModels"
+  xmlns:views="using:smnclauncher.Views"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="smnclauncher.Views.MainWindow"
+  Icon="/Assets/avalonia-logo.ico"
+  Title="smnclauncher">
+
+  <Grid RowDefinitions="1*,3*" ColumnDefinitions="*,*">
+    <!-- Launch and Patch -->
+    <Grid Grid.Row="0" Grid.Column="0">
+      <Grid RowDefinitions="*,*">
+        <Button Grid.Row="0" Margin="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="Launch" Name="BttnLaunch"/>
+        <Button Grid.Row="1" Margin="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="Update" Name="BttnUpdate"/>
+      </Grid>
+    </Grid>
+
+    <!-- Patch Notes -->
+    <Grid Grid.Row="1" Grid.Column="0">
+      <TextBlock Text="Rule Changes" Margin="3"/>
+    </Grid>
+
+    <!-- Authenticate -->
+    <views:AuthenticateView Grid.Row="0" Grid.Column="1" Name="AuthenticateView"/>
+
+    <!-- Game Install -->
+    <views:GameLocationView Grid.Row="1" Grid.Column="1" Name="GameLocationView"/>
+  </Grid>
+
+</Window>
