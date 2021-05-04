@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using HtmlAgilityPack;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using smnclauncher.Models;
 using smnclauncher.ViewModels.Patcher;
 using System;
@@ -6,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
@@ -25,6 +28,10 @@ namespace smnclauncher.ViewModels
 
         public readonly ReactiveCommand<Unit, Unit> update;
 
+        public readonly ReactiveCommand<Unit, string> getPatchNotes;
+
+        [ObservableAsProperty] public string PatchNotes { get; } = "";
+
         public MainViewModel()
         {
             gameLocation   = new GameLocationViewModel();
@@ -39,6 +46,14 @@ namespace smnclauncher.ViewModels
 
             launch = ReactiveCommand.CreateFromTask(LaunchGame, canLaunchGame);
             update = ReactiveCommand.CreateFromObservable<Unit, Unit>(_ => launchPatcher.Handle(new PatcherViewModel(gameLocation.Install)), hasValidInstall);
+            getPatchNotes = ReactiveCommand.CreateFromTask(GetPatchNotes);
+
+            getPatchNotes
+                .ToPropertyEx(this, vm => vm.PatchNotes);
+
+            getPatchNotes
+                .Execute()
+                .Subscribe();
         }
 
         private async Task LaunchGame()
@@ -84,9 +99,27 @@ namespace smnclauncher.ViewModels
             }
         }
 
-        private void PatchGame()
+        private async Task<string> GetPatchNotes()
         {
-            //
+            using var client = new HttpClient();
+
+            var response  = await client.GetStreamAsync("https://reboot.smnc.lennardf1989.com/rulechanges.htm");
+            var htmlDoc   = new HtmlDocument();
+
+            htmlDoc.Load(response);
+
+            var converter  = new ReverseMarkdown.Converter();
+            var htmlString =  htmlDoc
+                .DocumentNode
+                .Descendants("div")
+                .Where(node => node.HasClass("overlay"))
+                .First()
+                .Descendants("div")
+                .First()
+                .WriteContentTo();
+            var markdown = converter.Convert(htmlString);
+
+            return markdown;
         }
     }
 }

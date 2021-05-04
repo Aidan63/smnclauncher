@@ -3,8 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using Markdown.Avalonia;
 using ReactiveUI;
-using smnclauncher.Models;
 using smnclauncher.ViewModels;
 using System.ComponentModel;
 using System.Reactive;
@@ -23,6 +23,8 @@ namespace smnclauncher.Views
 
         public AuthenticateView AuthenticateView => this.FindControl<AuthenticateView>("AuthenticateView");
 
+        public MarkdownScrollViewer PatchNotesDisplay => this.FindControl<MarkdownScrollViewer>("PatchNotes");
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -32,6 +34,9 @@ namespace smnclauncher.Views
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel, vm => vm.authentication, v => v.AuthenticateView.ViewModel)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel, vm => vm.PatchNotes, v => v.PatchNotesDisplay.Markdown)
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.launch, v => v.BttnLanch)
