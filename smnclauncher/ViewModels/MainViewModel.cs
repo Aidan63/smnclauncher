@@ -39,10 +39,13 @@ namespace smnclauncher.ViewModels
             launchPatcher  = new Interaction<PatcherViewModel, Unit>();
 
             // We can only start the game when non null credentials and a non null game install have been provided.
-            var hasValidInstall = this.WhenAnyValue(vm => vm.gameLocation.Install).Select(v => v is not null);
-            var canLaunchGame   = this
-                .WhenAnyValue(vm => vm.authentication.Username, vm => vm.authentication.Password, vm => vm.gameLocation.Install)
-                .Select(((string username, string password, IInstall? install) args) => !string.IsNullOrWhiteSpace(args.username) && !string.IsNullOrWhiteSpace(args.password) && args.install is not null);
+            var hasValidInstall     = this.WhenAnyValue(vm => vm.gameLocation.Install).Select(v => v is not null);
+            var hasValidCredentials = this.WhenAnyValue(vm => vm.authentication.Username, vm => vm.authentication.Password).Select(args => !string.IsNullOrWhiteSpace(args.Item1) && !string.IsNullOrWhiteSpace(args.Item2));
+            var canLaunchGame       = Observable
+                .CombineLatest(
+                    hasValidInstall,
+                    hasValidCredentials,
+                    (validInstall, validCredentials) => validInstall && validCredentials);
 
             launch = ReactiveCommand.CreateFromObservable(LaunchGame, canLaunchGame);
             update = ReactiveCommand.CreateFromObservable(LaunchPatcher, hasValidInstall);
@@ -63,7 +66,7 @@ namespace smnclauncher.ViewModels
                             {
                                 UseShellExecute = false,
                                 FileName        = "C:/Program Files (x86)/Steam/Steam.exe",
-                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"\"\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\"\"\""
+                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\""
                             };
                             using (var proc = new Process { StartInfo = steamInfo })
                             {
@@ -82,8 +85,8 @@ namespace smnclauncher.ViewModels
                             var manualInfo = new ProcessStartInfo
                             {
                                 UseShellExecute = false,
-                                FileName = exe,
-                                Arguments = $"-autologin -Ticket=\"\"\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\"\"\""
+                                FileName        = exe,
+                                Arguments       = $"-autologin -Ticket=\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\""
                             };
                             using (var proc = new Process { StartInfo = manualInfo })
                             {
