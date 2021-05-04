@@ -2,8 +2,10 @@
 using Gameloop.Vdf.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using smnclauncher.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -16,26 +18,32 @@ namespace smnclauncher.ViewModels
 {
     public class GameLocationViewModel : ReactiveObject
     {
-        [Reactive] public string Directory { get; set; }
+        [ObservableAsProperty] public IInstall? Install { get; }
 
-        public readonly ReactiveCommand<Unit, string> findGameDirectory;
+        public readonly Interaction<Unit, string> getDirectory;
+
+        public readonly ReactiveCommand<Unit, IInstall> findGameDirectory;
+
+        public readonly ReactiveCommand<Unit, IInstall> selectGameDirectory;
 
         public GameLocationViewModel()
         {
-            Directory = "Unknown Location";
+            getDirectory        = new Interaction<Unit, string>();
+            findGameDirectory   = ReactiveCommand.CreateFromObservable(FindSteamInstall);
+            selectGameDirectory = ReactiveCommand.CreateFromObservable<IInstall>(() => getDirectory.Handle(Unit.Default).Where(Directory.Exists).Select(v => new ManualInstall(v)));
 
-            findGameDirectory = ReactiveCommand.CreateFromObservable(FindSteamInstall);
-            findGameDirectory
-                .BindTo(this, vm => vm.Directory);
+            Observable
+                .Merge(findGameDirectory, selectGameDirectory)
+                .ToPropertyEx(this, vm => vm.Install);
         }
 
-        private static IObservable<string> FindSteamInstall()
+        private static IObservable<IInstall> FindSteamInstall()
         {
             return Observable
-                .Create<string>(obs =>
+                .Create<SteamInstall>(obs =>
                 {
                     var steamDirectory = "C:/Program Files (x86)/Steam";
-                    if (!System.IO.Directory.Exists(steamDirectory))
+                    if (!Directory.Exists(steamDirectory))
                     {
                         throw new Exception("Unable to find steam install");
                     }
@@ -53,7 +61,7 @@ namespace smnclauncher.ViewModels
                                 var prop  = item as VProperty;
                                 var value = prop.Value as VValue;
 
-                                if (System.IO.Directory.Exists(value.Value as string))
+                                if (Directory.Exists(value.Value as string))
                                 {
                                     allLibraryFolders.Add(value.Value as string);
                                 }
@@ -65,7 +73,7 @@ namespace smnclauncher.ViewModels
                     foreach (var library in allLibraryFolders)
                     {
                         var steamapps = Path.Combine(library, "steamapps");
-                        foreach (var file in System.IO.Directory.GetFiles(steamapps, "*.acf"))
+                        foreach (var file in Directory.GetFiles(steamapps, "*.acf"))
                         {
                             dynamic acf  = VdfConvert.Deserialize(File.ReadAllText(file));
                             VValue appid = acf.Value.appid;
@@ -74,7 +82,7 @@ namespace smnclauncher.ViewModels
                             {
                                 VValue installdir = acf.Value.installdir;
 
-                                obs.OnNext(Path.Combine(steamapps, "common", installdir.Value as string));
+                                obs.OnNext(new SteamInstall(Path.Combine(steamapps, "common", installdir.Value as string)));
                                 obs.OnCompleted();
 
                                 return Disposable.Empty;

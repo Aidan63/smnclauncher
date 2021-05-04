@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:rxui="http://reactiveui.net"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="300"
+        x:Class="smnclauncher.Views.PatcherWindow"
+        x:Name="PatcherWindow"
+        Title="PatcherWindow">
+  <rxui:RoutedViewHost
+    x:Name="ViewHost"
+    HorizontalContentAlignment="Stretch"
+    VerticalContentAlignment="Stretch"/>
+</Window>

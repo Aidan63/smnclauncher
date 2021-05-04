@@ -5,16 +5,30 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Artalk.Xmpp" Version="1.0.2" />
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+    <Content Remove="C:\Users\AidanLee\.nuget\packages\artalk.xmpp\1.0.2\contentFiles\any\net5.0\Client\Examples.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\secrets.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\secrets.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="akavache" Version="7.2.1" />
+    <PackageReference Include="Avalonia" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.3" />
     <PackageReference Include="Gameloop.Vdf" Version="0.6.1" />
-    <PackageReference Include="ReactiveUI.Fody" Version="13.2.10" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.51.0.2300" />
+    <PackageReference Include="OvermindRsync" Version="1.0.0" />
+    <PackageReference Include="ReactiveUI.Fody" Version="13.2.18" />
+    <PackageReference Include="SevenZipSharp.Interop" Version="19.0.1" />
+    <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.4.0.345" />
   </ItemGroup>
 </Project>

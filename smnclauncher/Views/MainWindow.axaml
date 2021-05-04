@@ -21,7 +21,10 @@
 
     <!-- Patch Notes -->
     <Grid Grid.Row="1" Grid.Column="0">
-      <TextBlock Text="Rule Changes" Margin="3"/>
+      <StackPanel Orientation="Vertical">
+        <TextBlock Text="Rule Changes" Margin="3"/>
+        <TextBlock Text="TODO : Scrape the web page for patch notes" Margin="3"/>
+      </StackPanel>
     </Grid>
 
     <!-- Authenticate -->

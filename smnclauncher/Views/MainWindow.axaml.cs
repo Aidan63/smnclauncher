@@ -1,10 +1,15 @@
+using Akavache;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
+using smnclauncher.Models;
 using smnclauncher.ViewModels;
+using System.ComponentModel;
+using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
 namespace smnclauncher.Views
 {
@@ -34,6 +39,16 @@ namespace smnclauncher.Views
 
                 this.BindCommand(ViewModel, vm => vm.update, v => v.BttnUpdate)
                     .DisposeWith(disposables);
+
+                this.BindInteraction(ViewModel, vm => vm.launchPatcher, ctx =>
+                    {
+                        var popup = new PatcherWindow { Width = 800, Height = 300, WindowStartupLocation = WindowStartupLocation.CenterOwner, ViewModel = ctx.Input };
+
+                        ctx.SetOutput(Unit.Default);
+
+                        return Observable.Start(async () => await popup.ShowDialog(this), RxApp.MainThreadScheduler);
+                    })
+                    .DisposeWith(disposables);
             });
 #if DEBUG
             this.AttachDevTools();
@@ -43,6 +58,11 @@ namespace smnclauncher.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            BlobCache.Shutdown().Wait();
         }
     }
 }
