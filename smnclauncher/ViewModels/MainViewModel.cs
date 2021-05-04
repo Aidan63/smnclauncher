@@ -22,20 +22,19 @@ namespace smnclauncher.ViewModels
 
         public readonly AuthenticateViewModel authentication;
 
+        public readonly PatchNotesViewModel patchNotes;
+
         public readonly Interaction<PatcherViewModel, Unit> launchPatcher;
 
         public readonly ReactiveCommand<Unit, Unit> launch;
 
         public readonly ReactiveCommand<Unit, Unit> update;
 
-        public readonly ReactiveCommand<Unit, string> getPatchNotes;
-
-        [ObservableAsProperty] public string PatchNotes { get; } = "";
-
         public MainViewModel()
         {
             gameLocation   = new GameLocationViewModel();
             authentication = new AuthenticateViewModel();
+            patchNotes     = new PatchNotesViewModel();
             launchPatcher  = new Interaction<PatcherViewModel, Unit>();
 
             // We can only start the game when non null credentials and a non null game install have been provided.
@@ -46,14 +45,6 @@ namespace smnclauncher.ViewModels
 
             launch = ReactiveCommand.CreateFromTask(LaunchGame, canLaunchGame);
             update = ReactiveCommand.CreateFromObservable<Unit, Unit>(_ => launchPatcher.Handle(new PatcherViewModel(gameLocation.Install)), hasValidInstall);
-            getPatchNotes = ReactiveCommand.CreateFromTask(GetPatchNotes);
-
-            getPatchNotes
-                .ToPropertyEx(this, vm => vm.PatchNotes);
-
-            getPatchNotes
-                .Execute()
-                .Subscribe();
         }
 
         private async Task LaunchGame()
@@ -97,29 +88,6 @@ namespace smnclauncher.ViewModels
                 default:
                     throw new NullReferenceException("game installation was null");
             }
-        }
-
-        private async Task<string> GetPatchNotes()
-        {
-            using var client = new HttpClient();
-
-            var response  = await client.GetStreamAsync("https://reboot.smnc.lennardf1989.com/rulechanges.htm");
-            var htmlDoc   = new HtmlDocument();
-
-            htmlDoc.Load(response);
-
-            var converter  = new ReverseMarkdown.Converter();
-            var htmlString =  htmlDoc
-                .DocumentNode
-                .Descendants("div")
-                .Where(node => node.HasClass("overlay"))
-                .First()
-                .Descendants("div")
-                .First()
-                .WriteContentTo();
-            var markdown = converter.Convert(htmlString);
-
-            return markdown;
         }
     }
 }

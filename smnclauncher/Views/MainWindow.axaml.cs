@@ -23,7 +23,7 @@ namespace smnclauncher.Views
 
         public AuthenticateView AuthenticateView => this.FindControl<AuthenticateView>("AuthenticateView");
 
-        public MarkdownScrollViewer PatchNotesDisplay => this.FindControl<MarkdownScrollViewer>("PatchNotes");
+        public PatchNotesView PatchNotesView => this.FindControl<PatchNotesView>("PatchNotesView");
 
         public MainWindow()
         {
@@ -36,7 +36,7 @@ namespace smnclauncher.Views
                 this.OneWayBind(ViewModel, vm => vm.authentication, v => v.AuthenticateView.ViewModel)
                     .DisposeWith(disposables);
 
-                this.OneWayBind(ViewModel, vm => vm.PatchNotes, v => v.PatchNotesDisplay.Markdown)
+                this.OneWayBind(ViewModel, vm => vm.patchNotes, v => v.PatchNotesView.ViewModel)
                     .DisposeWith(disposables);
 
                 this.BindCommand(ViewModel, vm => vm.launch, v => v.BttnLanch)

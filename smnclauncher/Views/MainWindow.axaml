@@ -20,15 +20,8 @@
       </Grid>
     </Grid>
 
-    <!-- Patch Notes -->
-    <Grid Grid.Row="1" Grid.Column="0">
-      <md:MarkdownScrollViewer x:Name="PatchNotes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-    </Grid>
-
-    <!-- Authenticate -->
+    <views:PatchNotesView Grid.Row="1" Grid.Column="0" Name="PatchNotesView"/>
     <views:AuthenticateView Grid.Row="0" Grid.Column="1" Name="AuthenticateView"/>
-
-    <!-- Game Install -->
     <views:GameLocationView Grid.Row="1" Grid.Column="1" Name="GameLocationView"/>
   </Grid>
 
