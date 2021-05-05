@@ -140,7 +140,8 @@ namespace smnclauncher.ViewModels.Patcher
                         }
                     });
                 })
-                .Select(norm => norm * 100);
+                .Select(norm => norm * 100)
+                .SubscribeOn(RxApp.TaskpoolScheduler);
         }
 
         private static string ReadSecrets()
