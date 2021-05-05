@@ -74,6 +74,11 @@ namespace smnclauncher.Utils
                                 File.Delete(dst);
                             }
 
+                            if (HashFile(tempPatch) != entry.NewHash)
+                            {
+                                throw new Exception("Patched files hash does not match the expected hash");
+                            }
+
                             File.Move(tempPatch, dst);
                             break;
                     }
