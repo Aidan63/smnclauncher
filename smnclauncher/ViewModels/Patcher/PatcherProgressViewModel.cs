@@ -65,7 +65,7 @@ namespace smnclauncher.ViewModels.Patcher
                     // Since the google drive files are public we can use an API key instead of needing OAuth.
                     var client = new BaseClientService.Initializer
                     {
-                        ApiKey          = ReadSecrets(),
+                        ApiKey = ReadSecrets(),
                         ApplicationName = "smnclauncher"
                     };
 
@@ -90,16 +90,16 @@ namespace smnclauncher.ViewModels.Patcher
                     // Copy the file into a file stream for extraction later.
                     var tmpDirs = new List<string>();
                     var tmpFile = Path.Combine(installDirectory, "tmp.exe");
-                    var output  = File.OpenWrite(tmpFile);
-                    var result  = await request.DownloadAsync(output, ct);
+                    var output = File.OpenWrite(tmpFile);
+                    var result = await request.DownloadAsync(output, ct);
                     output.Close();
 
                     switch (result.Status)
                     {
                         case Google.Apis.Download.DownloadStatus.Completed:
                             var baseFolder = installDirectory;
-                            var patchDir   = Path.Combine(baseFolder, "_patch");
-                            var extractor  = new SevenZip.SevenZipExtractor(tmpFile);
+                            var patchDir = Path.Combine(baseFolder, "_patch");
+                            var extractor = new SevenZip.SevenZipExtractor(tmpFile);
 
                             extractor.ExtractArchive(baseFolder);
 
@@ -116,7 +116,7 @@ namespace smnclauncher.ViewModels.Patcher
                             Utils.Patcher
                                 .Patch(patchDir, baseFolder)
                                 .Select(v => 0.5 + (v * 0.5))
-                                .Subscribe(obs);
+                                .Subscribe(v => obs.OnNext(v), ex => obs.OnError(ex), () => obs.OnNext(1.0));
                             break;
                         case Google.Apis.Download.DownloadStatus.Failed:
                         case Google.Apis.Download.DownloadStatus.NotStarted:
