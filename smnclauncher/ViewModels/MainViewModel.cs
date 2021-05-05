@@ -66,7 +66,7 @@ namespace smnclauncher.ViewModels
                             {
                                 UseShellExecute = false,
                                 FileName        = "C:/Program Files (x86)/Steam/Steam.exe",
-                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"\"\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\"\"\""
+                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\""
                             };
                             using (var proc = new Process { StartInfo = steamInfo })
                             {
