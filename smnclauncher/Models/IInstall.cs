@@ -10,7 +10,5 @@ namespace smnclauncher.Models
     public interface IInstall
     {
         string Directory();
-
-        IObservable<Unit> Launch();
     }
 }

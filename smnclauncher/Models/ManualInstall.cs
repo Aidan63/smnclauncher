@@ -20,10 +20,5 @@ namespace smnclauncher.Models
         {
             return directory;
         }
-
-        public IObservable<Unit> Launch()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

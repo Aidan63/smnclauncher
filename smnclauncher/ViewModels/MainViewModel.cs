@@ -66,7 +66,7 @@ namespace smnclauncher.ViewModels
                             {
                                 UseShellExecute = false,
                                 FileName        = "C:/Program Files (x86)/Steam/Steam.exe",
-                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\""
+                                Arguments       = $"-applaunch 104700 -autologin -Ticket=\"\"\"{ authentication.Username.Length }|{ authentication.Username }|{ authentication.Password }\"\"\""
                             };
                             using (var proc = new Process { StartInfo = steamInfo })
                             {
@@ -76,12 +76,7 @@ namespace smnclauncher.ViewModels
                             }
                             break;
                         case ManualInstall manual:
-                            var exe = Path.Combine(manual.Directory(), "Binaries", "Win32", "SuperMNCGameClient.exe");
-                            if (!File.Exists(exe))
-                            {
-                                throw new FileNotFoundException($"Executable { exe } not found");
-                            }
-
+                            var exe        = Path.Combine(manual.Directory(), "Binaries", "Win32", "SuperMNCGameClient.exe");
                             var manualInfo = new ProcessStartInfo
                             {
                                 UseShellExecute = false,
@@ -94,8 +89,6 @@ namespace smnclauncher.ViewModels
 
                                 await proc.WaitForExitAsync();
                             }
-
-                            obs.OnCompleted();
                             break;
                         default: throw new NullReferenceException("game installation was null");
                     }

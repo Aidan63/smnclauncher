@@ -1,4 +1,5 @@
-﻿using Gameloop.Vdf;
+﻿using Akavache;
+using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -16,8 +17,10 @@ using System.Threading.Tasks;
 
 namespace smnclauncher.ViewModels
 {
-    public class GameLocationViewModel : ReactiveObject
+    public class GameLocationViewModel : ReactiveObject, IActivatableViewModel
     {
+        public ViewModelActivator Activator { get; }
+
         [ObservableAsProperty] public IInstall? Install { get; }
 
         public readonly Interaction<Unit, string> getDirectory;
@@ -28,13 +31,32 @@ namespace smnclauncher.ViewModels
 
         public GameLocationViewModel()
         {
+            Activator = new ViewModelActivator();
+
             getDirectory        = new Interaction<Unit, string>();
             findGameDirectory   = ReactiveCommand.CreateFromObservable(FindSteamInstall);
             selectGameDirectory = ReactiveCommand.CreateFromObservable<IInstall>(() => getDirectory.Handle(Unit.Default).Where(Directory.Exists).Select(v => new ManualInstall(v)));
 
-            Observable
-                .Merge(findGameDirectory, selectGameDirectory)
-                .ToPropertyEx(this, vm => vm.Install);
+            this.WhenActivated(disposables =>
+            {
+                var existingInstall = BlobCache
+                    .LocalMachine
+                    .GetObject<SavedInstall>("install")
+                    .Catch(Observable.Return<SavedInstall?>(null))
+                    .WhereNotNull()
+                    .Select(RestoreSavedInstall);
+
+                Observable
+                    .Merge(existingInstall, findGameDirectory, selectGameDirectory)
+                    .ToPropertyEx(this, vm => vm.Install)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(vm => vm.Install)
+                    .WhereNotNull()
+                    .Do(SaveInstallInfo)
+                    .Subscribe()
+                    .DisposeWith(disposables);
+            });
         }
 
         private static IObservable<IInstall> FindSteamInstall()
@@ -94,6 +116,43 @@ namespace smnclauncher.ViewModels
 
                     return Disposable.Empty;
                 });
+        }
+
+        private enum SavedInstallType
+        {
+            Steam,
+            Manual
+        }
+
+        private class SavedInstall
+        {
+            public SavedInstallType InstallType { get; set; }
+
+            public string Directory { get; set; }
+
+            public SavedInstall(SavedInstallType type, string directory)
+            {
+                InstallType = type;
+                Directory = directory;
+            }
+        }
+
+        private static void SaveInstallInfo(IInstall install)
+        {
+            BlobCache.LocalMachine.InsertObject("install", install switch
+            {
+                SteamInstall => new SavedInstall(SavedInstallType.Steam, install.Directory()),
+                ManualInstall => new SavedInstall(SavedInstallType.Manual, install.Directory())
+            });
+        }
+
+        private static IInstall RestoreSavedInstall(SavedInstall install)
+        {
+            return install.InstallType switch
+            {
+                SavedInstallType.Steam => new SteamInstall(install.Directory),
+                SavedInstallType.Manual => new ManualInstall(install.Directory)
+            };
         }
     }
 }
