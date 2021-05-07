@@ -27,6 +27,9 @@ namespace smnclauncher.Views
                 this.Bind(ViewModel, vm => vm.Password, v => v.InputPassword.Text)
                     .DisposeWith(disposables);
             });
+#if DEBUG
+            this.AttachDevTools();
+#endif
         }
 
         private void InitializeComponent()

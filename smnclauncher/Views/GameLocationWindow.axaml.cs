@@ -58,6 +58,9 @@ namespace smnclauncher.Views
                 this.BindCommand(ViewModel, vm => vm.findGameDirectory, v => v.BttnAutoLocation)
                     .DisposeWith(disposables);
             });
+#if DEBUG
+            this.AttachDevTools();
+#endif
         }
 
         private void InitializeComponent()
