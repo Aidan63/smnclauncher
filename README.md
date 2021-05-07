@@ -9,6 +9,7 @@
 - Download and apply patches from google drive links.
 - Store and launch the game with your credentials for auto login.
 - Supports steam and non-steam installs.
+- Scrape and display the patch notes from the reboot-smnc website.
 
 Account Management         |  Install Management       | Applying Patches
 :-------------------------:|:-------------------------:|:-------------------------:
