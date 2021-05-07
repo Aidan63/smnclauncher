@@ -34,4 +34,12 @@
     <PackageReference Include="SevenZipSharp.Interop" Version="19.0.1" />
     <PackageReference Include="Squid-Box.SevenZipSharp" Version="1.4.0.345" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\CredentialsWindow.axaml.cs">
+      <DependentUpon>CredentialsWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\GameLocationWindow.axaml.cs">
+      <DependentUpon>GameLocationWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

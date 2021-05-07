@@ -11,18 +11,56 @@
   Icon="/Assets/avalonia-logo.ico"
   Title="smnclauncher">
 
-  <Grid RowDefinitions="1*,3*" ColumnDefinitions="*,*">
-    <!-- Launch and Patch -->
-    <Grid Grid.Row="0" Grid.Column="0">
-      <Grid RowDefinitions="*,*">
-        <Button Grid.Row="0" Margin="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="Launch" Name="BttnLaunch"/>
-        <Button Grid.Row="1" Margin="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="Update" Name="BttnUpdate"/>
-      </Grid>
+  <Grid RowDefinitions="Auto,*,Auto">
+    <Grid Grid.Row="0" ColumnDefinitions="1*,Auto,Auto,Auto">
+      <TextBlock
+        Grid.Column="0"
+        Margin="3"
+        Text="SMNC"
+        VerticalAlignment="Center"/>
+      <Button
+        Name="BttnAccount"
+        Grid.Column="1"
+        Margin="3">
+        <Viewbox Width="24" Height="24">
+          <Canvas Width="24" Height="24">
+            <Path Fill="Black" Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+          </Canvas>
+        </Viewbox>
+      </Button>
+      <Button
+        Name="BttnDirectory"
+        Grid.Column="2"
+        Margin="3">
+        <Viewbox Width="24" Height="24">
+          <Canvas Width="24" Height="24">
+            <Path Fill="Black" Data="M7.97,16L5,19C4.67,19.3 4.23,19.5 3.75,19.5A1.75,1.75 0 0,1 2,17.75V17.5L3,10.12C3.21,7.81 5.14,6 7.5,6H16.5C18.86,6 20.79,7.81 21,10.12L22,17.5V17.75A1.75,1.75 0 0,1 20.25,19.5C19.77,19.5 19.33,19.3 19,19L16.03,16H7.97M7,8V10H5V11H7V13H8V11H10V10H8V8H7M16.5,8A0.75,0.75 0 0,0 15.75,8.75A0.75,0.75 0 0,0 16.5,9.5A0.75,0.75 0 0,0 17.25,8.75A0.75,0.75 0 0,0 16.5,8M14.75,9.75A0.75,0.75 0 0,0 14,10.5A0.75,0.75 0 0,0 14.75,11.25A0.75,0.75 0 0,0 15.5,10.5A0.75,0.75 0 0,0 14.75,9.75M18.25,9.75A0.75,0.75 0 0,0 17.5,10.5A0.75,0.75 0 0,0 18.25,11.25A0.75,0.75 0 0,0 19,10.5A0.75,0.75 0 0,0 18.25,9.75M16.5,11.5A0.75,0.75 0 0,0 15.75,12.25A0.75,0.75 0 0,0 16.5,13A0.75,0.75 0 0,0 17.25,12.25A0.75,0.75 0 0,0 16.5,11.5Z" />
+          </Canvas>
+        </Viewbox>
+      </Button>
+      <Button
+        Name="BttnUpdate"
+        Grid.Column="3"
+        Margin="3">
+        <Viewbox Width="24" Height="24">
+          <Canvas Width="24" Height="24">
+            <Path Fill="Black" Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+          </Canvas>
+        </Viewbox>
+      </Button>
     </Grid>
-
-    <views:PatchNotesView Grid.Row="1" Grid.Column="0" Name="PatchNotesView"/>
-    <views:AuthenticateView Grid.Row="0" Grid.Column="1" Name="AuthenticateView"/>
-    <views:GameLocationView Grid.Row="1" Grid.Column="1" Name="GameLocationView"/>
+    <views:PatchNotesView
+      Name="PatchNotesView"
+      Grid.Row="1"/>
+    <Button
+      Name="BttnLaunch"
+      Grid.Row="2"
+      Height="48"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      HorizontalContentAlignment="Center"
+      VerticalContentAlignment="Center"
+      Content="Launch"/>
   </Grid>
 
 </Window>

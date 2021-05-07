@@ -21,22 +21,32 @@ namespace smnclauncher.ViewModels
     {
         public readonly GameLocationViewModel gameLocation;
 
-        public readonly AuthenticateViewModel authentication;
+        public readonly CredentialsViewModel authentication;
 
         public readonly PatchNotesViewModel patchNotes;
 
         public readonly Interaction<PatcherViewModel, Unit> launchPatcher;
 
+        public readonly Interaction<CredentialsViewModel, Unit> launchCredentials;
+
+        public readonly Interaction<GameLocationViewModel, Unit> launchGameLocation;
+
         public readonly ReactiveCommand<Unit, Unit> launch;
 
         public readonly ReactiveCommand<Unit, Unit> update;
 
+        public readonly ReactiveCommand<Unit, Unit> updateCredentials;
+
+        public readonly ReactiveCommand<Unit, Unit> findGameLocation;
+
         public MainViewModel()
         {
-            gameLocation   = new GameLocationViewModel();
-            authentication = new AuthenticateViewModel();
-            patchNotes     = new PatchNotesViewModel();
-            launchPatcher  = new Interaction<PatcherViewModel, Unit>();
+            gameLocation       = new GameLocationViewModel();
+            authentication     = new CredentialsViewModel();
+            patchNotes         = new PatchNotesViewModel();
+            launchPatcher      = new Interaction<PatcherViewModel, Unit>();
+            launchCredentials  = new Interaction<CredentialsViewModel, Unit>();
+            launchGameLocation = new Interaction<GameLocationViewModel, Unit>();
 
             // We can only start the game when non null credentials and a non null game install have been provided.
             var hasValidInstall     = this.WhenAnyValue(vm => vm.gameLocation.Install).Select(v => v is not null);
@@ -49,6 +59,8 @@ namespace smnclauncher.ViewModels
 
             launch = ReactiveCommand.CreateFromObservable(LaunchGame, canLaunchGame);
             update = ReactiveCommand.CreateFromObservable(LaunchPatcher, hasValidInstall);
+            updateCredentials  = ReactiveCommand.CreateFromObservable(() => launchCredentials.Handle(authentication));
+            findGameLocation = ReactiveCommand.CreateFromObservable(() => launchGameLocation.Handle(gameLocation));
         }
 
         private IObservable<Unit> LaunchPatcher() =>
