@@ -17,9 +17,8 @@ using System.Threading.Tasks;
 
 namespace smnclauncher.ViewModels
 {
-    public class GameLocationViewModel : ReactiveObject, IActivatableViewModel
+    public class GameLocationViewModel : ReactiveObject
     {
-        public ViewModelActivator Activator { get; }
 
         [ObservableAsProperty] public IInstall? Install { get; }
 
@@ -31,32 +30,25 @@ namespace smnclauncher.ViewModels
 
         public GameLocationViewModel()
         {
-            Activator = new ViewModelActivator();
-
             getDirectory        = new Interaction<Unit, string>();
             findGameDirectory   = ReactiveCommand.CreateFromObservable(FindSteamInstall);
             selectGameDirectory = ReactiveCommand.CreateFromObservable<IInstall>(() => getDirectory.Handle(Unit.Default).Where(Directory.Exists).Select(v => new ManualInstall(v)));
 
-            this.WhenActivated(disposables =>
-            {
-                var existingInstall = BlobCache
-                    .LocalMachine
-                    .GetObject<SavedInstall>("install")
-                    .Catch(Observable.Return<SavedInstall?>(null))
-                    .WhereNotNull()
-                    .Select(RestoreSavedInstall);
+            var existingInstall = BlobCache
+                .LocalMachine
+                .GetObject<SavedInstall>("install")
+                .Catch(Observable.Return<SavedInstall?>(null))
+                .WhereNotNull()
+                .Select(RestoreSavedInstall);
 
-                Observable
-                    .Merge(existingInstall, findGameDirectory, selectGameDirectory)
-                    .ToPropertyEx(this, vm => vm.Install)
-                    .DisposeWith(disposables);
+            Observable
+                .Merge(existingInstall, findGameDirectory, selectGameDirectory)
+                .ToPropertyEx(this, vm => vm.Install);
 
-                this.WhenAnyValue(vm => vm.Install)
-                    .WhereNotNull()
-                    .Do(SaveInstallInfo)
-                    .Subscribe()
-                    .DisposeWith(disposables);
-            });
+            this.WhenAnyValue(vm => vm.Install)
+                .WhereNotNull()
+                .Do(SaveInstallInfo)
+                .Subscribe();
         }
 
         private static IObservable<IInstall> FindSteamInstall()

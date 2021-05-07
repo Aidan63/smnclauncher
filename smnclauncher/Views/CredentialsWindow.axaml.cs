@@ -8,7 +8,7 @@ using System.Reactive.Disposables;
 
 namespace smnclauncher.Views
 {
-    public class AuthenticateView : ReactiveUserControl<AuthenticateViewModel>
+    public class CredentialsWindow : ReactiveWindow<CredentialsViewModel>
     {
         public Button BttnLogin => this.FindControl<Button>("BttnLogin");
 
@@ -16,14 +16,11 @@ namespace smnclauncher.Views
 
         public TextBox InputPassword => this.FindControl<TextBox>("InputPassword");
 
-        public AuthenticateView()
+        public CredentialsWindow()
         {
             this.InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                this.BindCommand(ViewModel, vm => vm.login, v => v.BttnLogin, this.WhenAnyValue(v => v.ViewModel.Username, v => v.ViewModel.Password))
-                    .DisposeWith(disposables);
-
                 this.Bind(ViewModel, vm => vm.Username, v => v.InputUsername.Text)
                     .DisposeWith(disposables);
 
