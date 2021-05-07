@@ -64,6 +64,16 @@ namespace smnclauncher.Views
                         return Observable.Start(async () => await popup.ShowDialog(this), RxApp.MainThreadScheduler);
                     })
                     .DisposeWith(disposables);
+
+                this.BindInteraction(ViewModel, vm => vm.launchGameLocation, ctx =>
+                    {
+                        var popup = new GameLocationWindow { Width = 600, Height = 350, WindowStartupLocation = WindowStartupLocation.CenterOwner, ViewModel = ctx.Input };
+
+                        ctx.SetOutput(Unit.Default);
+
+                        return Observable.Start(async () => await popup.ShowDialog(this), RxApp.MainThreadScheduler);
+                    })
+                    .DisposeWith(disposables);
             });
 #if DEBUG
             this.AttachDevTools();

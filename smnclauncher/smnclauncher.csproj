@@ -38,5 +38,8 @@
     <Compile Update="Views\CredentialsWindow.axaml.cs">
       <DependentUpon>CredentialsWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\GameLocationWindow.axaml.cs">
+      <DependentUpon>GameLocationWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
